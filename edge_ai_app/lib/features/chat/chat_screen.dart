@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../core/services/chat_service.dart';
 import '../../core/models/message.dart';
+import '../../core/services/model_service.dart';
 
 /// 聊天界面（MVP 版本）
 class ChatScreen extends StatefulWidget {
@@ -13,11 +14,13 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final ChatService _chatService = ChatService();
+  final ModelService _modelService = ModelService();
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
   bool _isInitialized = false;
   bool _isLoading = true;
+  String? _currentModelName;
 
   @override
   void initState() {
@@ -27,7 +30,30 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _initializeService() async {
     try {
+      // 检查是否有可用模型
+      final models = _modelService.availableModels;
+      if (models.isEmpty) {
+        setState(() {
+          _isLoading = false;
+          _currentModelName = null;
+        });
+        return;
+      }
+
+      // 初始化聊天服务（加载当前选中的模型）
       await _chatService.initialize();
+      
+      // 获取当前模型名称
+      final currentModelId = _modelService.currentModelId;
+      if (currentModelId != null) {
+        final modelInfo = _modelService.getModelInfo(currentModelId);
+        if (modelInfo != null) {
+          _currentModelName = modelInfo.name;
+        }
+      } else if (models.isNotEmpty) {
+        _currentModelName = models.first.name;
+      }
+      
       setState(() {
         _isInitialized = true;
         _isLoading = false;
@@ -88,8 +114,28 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EdgeMind AI'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('LocalChat', style: TextStyle(fontSize: 18)),
+            if (_currentModelName != null)
+              Text(
+                _currentModelName!,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+              ),
+          ],
+        ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.folder_open),
+            onPressed: () {
+              // 切换到模型管理页面
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('请切换到底部"模型"标签页管理模型')),
+              );
+            },
+            tooltip: '管理模型',
+          ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: _chatService.messageHistory.isNotEmpty ? _clearHistory : null,
@@ -99,14 +145,67 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
-          // 消息列表
-          Expanded(
-            child: _buildMessageList(),
-          ),
+          // 无模型提示
+          if (!_isLoading && _modelService.availableModels.isEmpty)
+            _buildNoModelWarning()
+          else
+            // 消息列表
+            Expanded(
+              child: _buildMessageList(),
+            ),
           
           // 输入区域
           _buildInputArea(),
         ],
+      ),
+    );
+  }
+
+  /// 构建无模型警告
+  Widget _buildNoModelWarning() {
+    return Expanded(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.cloud_download_outlined,
+                size: 80,
+                color: Colors.orange[400],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                '暂无可用模型',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                '请先下载或导入一个 GGUF 格式的模型文件\n然后即可开始离线对话',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // 提示用户切换标签页
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('请切换到底部"模型"标签页下载或导入模型'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.download),
+                label: const Text('去下载模型'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

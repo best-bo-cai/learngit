@@ -1,46 +1,41 @@
 ```
-# Dependencies
+# Flutter/Dart
 .dart_tool/
 .packages
-.pub-cache/
-
-# Build artifacts
+pubspec.lock
 build/
-*.apk
-*.aab
-*.app
-*.exe
-*.dll
-*.so
-*.dylib
-
-# Logs
-*.log
-**/logs
+*.iws
+*.sw?
+*~
+/.metadata
+**/gen/**
+**/Debug/**
+**/Release/**
+*.pidb
+*.user
+*.userosscache
+*.sln.docstates
+**/logs/
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# Dependencies
+node_modules/
+vendor/
 
-# OS files
+# Logs
+*.log
+**/log/**
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Coverage
-coverage/
-*.coverage
-htmlcov/
-
-# Temporary files
-*.tmp
-*.temp
-**/temp/
 ```
