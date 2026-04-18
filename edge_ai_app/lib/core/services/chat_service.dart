@@ -99,13 +99,24 @@ class ChatService {
 
   /// 构建提示词（包含上下文）
   String _buildPrompt(String currentUserMessage) {
-    // MVP 版本：简单提示词
-    // TODO: 实现完整的上下文管理
-    return '''System: You are a helpful AI assistant. Respond in Chinese.
-
-User: $currentUserMessage
-
-Assistant:''';
+    // MVP 版本：简单提示词，符合 Qwen2.5 格式
+    // 参考：https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct
+    final buffer = StringBuffer();
+    
+    // System prompt
+    buffer.writeln('<|im_start|>system');
+    buffer.writeln('You are a helpful AI assistant. Respond in Chinese.');
+    buffer.writeln('<|im_end|>');
+    
+    // User message
+    buffer.writeln('<|im_start|>user');
+    buffer.writeln(currentUserMessage);
+    buffer.writeln('<|im_end|>');
+    
+    // Assistant response start
+    buffer.write('<|im_start|>assistant\n');
+    
+    return buffer.toString();
   }
 
   /// 清除对话历史

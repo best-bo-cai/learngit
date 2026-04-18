@@ -1,4 +1,50 @@
 ```
+# Dependencies
+.dart_tool/
+.packages
+.pub-cache/
+
+# Build artifacts
+build/
+*.apk
+*.aab
+*.app
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+**/logs
+
+# Environment
+.env
+.env.local
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+*.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.temp
+**/temp/
+```
+```
 # Flutter/Dart
 .dart_tool/
 .packages

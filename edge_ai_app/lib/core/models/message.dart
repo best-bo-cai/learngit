@@ -154,9 +154,17 @@ class ModelConfig {
   }
 
   /// 默认配置（MVP 版本）
+  /// 推荐使用 Qwen2.5-0.5B-Instruct-Q4_K_M.gguf (约 320MB)
+  /// 下载地址：https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
   static const defaultConfig = ModelConfig(
-    id: 'default',
-    name: 'Default Model',
-    path: 'assets/models/default.gguf',
+    id: 'qwen2.5-0.5b',
+    name: 'Qwen2.5 0.5B Instruct (Q4_K_M)',
+    path: 'assets/models/qwen2.5-0.5b-q4.gguf',
+    nCtx: 1024,  // PRD 要求：降低内存占用
+    nGpuLayers: 0,  // MVP: CPU 推理，保证稳定性
+    nThreads: 4,
+    temperature: 0.7,  // PRD 固定值
+    topP: 0.9,  // PRD 固定值
+    maxTokens: 512,  // PRD 固定值
   );
 }
