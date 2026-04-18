@@ -1,3 +1,45 @@
-(prd-03.md is a markdown file, which is a source/config file, so it should not be added to .gitignore)
+```
+# Flutter/Dart
+.dart_tool/
+.packages
+pubspec.lock
+build/
 
-(empty — output nothing)
+# Android
+.gradle/
+local.properties
+*.apk
+*.aar
+
+# iOS
+Pods/
+*.framework
+*.dylib
+
+# C++/Native
+*.o
+*.obj
+*.so
+*.dll
+*.a
+*.lib
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+```
